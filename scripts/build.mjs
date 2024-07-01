@@ -27,7 +27,7 @@ const nowDate = dayjs.tz().format('YYYY-MM-DD HH:mm:ss')
 const { description, title, keywords, loading, favicon, headerContent } =
   settings
 
-const { gitRepoUrl, homeUrl } = config.default
+const { gitRepoUrl } = config.default
 
 const s = gitRepoUrl.split('/')
 
@@ -59,16 +59,14 @@ async function buildSeo() {
       }
 
       seoTemplate += `<h3>${value.title || value.name || title}</h3>${
-        value.icon ? `<img data-src="${value.icon}" alt="${homeUrl}" />` : ''
+        value.icon ? `<img data-src="${value.icon}" alt="${value.icon}" />` : ''
       }<p>${value.desc || description}</p><a href="${
-        value.url || homeUrl || gitRepoUrl
+        value.url || gitRepoUrl
       }"></a>`
 
       if (value.urls && typeof value.urls === 'object') {
         for (let k in value.urls) {
-          seoTemplate += `<a href="${
-            value.urls[k] || homeUrl || gitRepoUrl
-          }"></a>`
+          seoTemplate += `<a href="${value.urls[k] || gitRepoUrl}"></a>`
         }
       }
     }
@@ -96,7 +94,12 @@ async function build() {
   t = t.replace('<!-- nav.script -->', scriptTemplate)
 
   t = t.replace('<!-- nav.seo -->', seoTemplate)
-  t = t.replace('<!-- nav.loading -->', LOAD_MAP[getLoadKey()] || '')
+
+  const loadingCode = settings.loadingCode.trim()
+  t = t.replace(
+    '<!-- nav.loading -->',
+    loadingCode || LOAD_MAP[getLoadKey()] || ''
+  )
 
   fs.writeFileSync(writePath, t, { encoding: 'utf-8' })
   fs.unlinkSync('./nav.config.js')

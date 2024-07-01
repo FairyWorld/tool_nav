@@ -187,6 +187,7 @@ const TAG_ID_NAME3 = 'Github'
   settings.spiderDescription ??= 'NO'
   settings.spiderTitle ??= 'NO'
   settings.spiderQty ??= 20
+  settings.loadingCode ??= ''
   fs.writeFileSync(settingsPath, JSON.stringify(settings), {
     encoding: 'utf-8',
   })
@@ -277,6 +278,18 @@ function setWeb(nav) {
             const navItemItem = navItem.nav[k]
             removeIconFont(navItemItem)
             formatDate(navItemItem)
+
+            navItemItem.nav.sort((a, b) => {
+              const aIdx =
+                a.index == null || a.index === ''
+                  ? Number.MAX_SAFE_INTEGER
+                  : a.index
+              const bIdx =
+                b.index == null || b.index === ''
+                  ? Number.MAX_SAFE_INTEGER
+                  : b.index
+              return aIdx - bIdx
+            })
             if (navItemItem.nav) {
               for (let l = 0; l < navItemItem.nav.length; l++) {
                 let breadcrumb = []
